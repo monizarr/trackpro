@@ -20,17 +20,21 @@ return new class extends Migration
         });
 
         // Produk
-        Schema::create('produks', function (Blueprint $table) {
+        Schema::create('produk', function (Blueprint $table) {
             $table->id();
+            $table->string('sku')->unique();
             $table->string('nama');
+            $table->string('gambar')->nullable();
+            $table->integer('harga');
             $table->text('deskripsi')->nullable();
             $table->string('bahan')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
 
         // ProdukBahan (relasi M:N antara Produk dan Material)
         Schema::create('produk_bahan', function (Blueprint $table) {
-            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade');
+            $table->foreignId('produk_id')->constrained('produk')->onDelete('cascade');
             $table->foreignId('material_id')->constrained('materials')->onDelete('cascade');
             $table->integer('qty');
             $table->primary(['produk_id', 'material_id']);
@@ -39,7 +43,7 @@ return new class extends Migration
         // BatchProduksi
         Schema::create('batch_produksi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade');
+            $table->foreignId('produk_id')->constrained('produk')->onDelete('cascade');
             $table->date('tgl_mulai')->nullable();
             $table->date('tgl_selesai')->nullable();
             $table->integer('jumlah_target');
@@ -106,7 +110,7 @@ return new class extends Migration
         Schema::dropIfExists('batch_bahan');
         Schema::dropIfExists('batch_produksi');
         Schema::dropIfExists('produk_bahans');
-        Schema::dropIfExists('produks');
+        Schema::dropIfExists('produk');
         Schema::dropIfExists('materials');
     }
 };

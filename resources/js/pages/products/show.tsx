@@ -87,13 +87,14 @@ const columns: ColumnDef<Product>[] = [
     },
 ];
 
-export default function ProductsPage() {
+export default function ProductPage() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
     const [produk, setProduk] = useState<Product[]>([]);
 
     useEffect(() => {
-        axios.get('/api/products')
+        const id = window.location.pathname.split('/').pop()
+        axios.get(`/api/product/${id}`)
             .then((response) => {
                 setProduk(response.data.data);
             })
@@ -101,6 +102,7 @@ export default function ProductsPage() {
                 console.error('Error fetching produk:', error);
             });
     }, []);
+    console.log(produk)
 
     const table = useReactTable({
         data: produk,
@@ -122,9 +124,12 @@ export default function ProductsPage() {
             <Head title="Produk" />
             <div className='p-4'>
                 <div className="mb-4">
+                    {produk.nama}
+                </div>
+                <div className="mb-4">
                     <input
                         type="text"
-                        placeholder="Cari Product..."
+                        placeholder="Cari Produksi..."
                         value={globalFilter ?? ""}
                         onChange={(e) => setGlobalFilter(e.target.value)}
                         className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300"

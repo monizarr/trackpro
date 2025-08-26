@@ -14,9 +14,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('stocks', function () {
         return Inertia::render('stocks/index');
     })->name('stocks');
-    Route::get('products', function () {
-        return Inertia::render('products/index');
-    })->name('products');
+    Route::prefix('products')->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('products/index');
+        })->name('products.index');
+        Route::get('/{id}', function () {
+            return Inertia::render('products/show');
+        })->name('products.show');
+    });
 });
 
 require __DIR__ . '/settings.php';
