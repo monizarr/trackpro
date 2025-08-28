@@ -8,3 +8,13 @@ export type Product = {
     bahan: string;
     status: string;
 };
+
+export type BatchProduction = {
+    id: number;
+    produk_id: number;
+    tgl_mulai: string;
+    tgl_selesai: string;
+    jumlah_target: number;
+    status: string;
+    nama_produk: string;
+};

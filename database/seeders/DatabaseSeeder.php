@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
                 'nama' => 'Test Product',
                 'deskripsi' => 'This is a test product.',
                 'harga' => 90000,
-                'gambar' => "",
+                'gambar' => "https://i.pinimg.com/236x/e1/08/2e/e1082e43c31769cca1575187860d599b.jpg",
                 'sku' => 'TEST-PRODUCT-001',
                 'status' => 'active',
                 'created_at' => now()
@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
                 'nama' => 'Test Product 2',
                 'deskripsi' => 'This is a test product 2.',
                 'harga' => 80000,
-                'gambar' => "",
+                'gambar' => "https://i.pinimg.com/736x/6a/72/ce/6a72cef6f2992ef1fb60c5045c218f5d.jpg",
                 'sku' => 'TEST-PRODUCT-002',
                 'status' => 'active',
                 'created_at' => now()
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
                 'nama' => 'Test Product 3',
                 'deskripsi' => 'This is a test product 3.',
                 'harga' => 70000,
-                'gambar' => "",
+                'gambar' => "https://i.pinimg.com/236x/2c/34/96/2c3496da3310c58e9ac8ed17201618c3.jpg",
                 'sku' => 'TEST-PRODUCT-003',
                 'status' => 'active',
                 'created_at' => now()

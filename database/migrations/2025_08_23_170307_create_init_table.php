@@ -3,6 +3,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -20,7 +21,7 @@ return new class extends Migration
         });
 
         // Produk
-        Schema::create('produk', function (Blueprint $table) {
+        Schema::create('produks', function (Blueprint $table) {
             $table->id();
             $table->string('sku')->unique();
             $table->string('nama');
@@ -34,7 +35,7 @@ return new class extends Migration
 
         // ProdukBahan (relasi M:N antara Produk dan Material)
         Schema::create('produk_bahan', function (Blueprint $table) {
-            $table->foreignId('produk_id')->constrained('produk')->onDelete('cascade');
+            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade');
             $table->foreignId('material_id')->constrained('materials')->onDelete('cascade');
             $table->integer('qty');
             $table->primary(['produk_id', 'material_id']);
@@ -43,9 +44,10 @@ return new class extends Migration
         // BatchProduksi
         Schema::create('batch_produksi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('produk_id')->constrained('produk')->onDelete('cascade');
-            $table->date('tgl_mulai')->nullable();
-            $table->date('tgl_selesai')->nullable();
+            $table->string('kode_batch');
+            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade');
+            $table->string('tgl_mulai')->nullable();
+            $table->string('tgl_selesai')->nullable();
             $table->integer('jumlah_target');
             $table->string('status')->default('draft'); // draft, in_progress, selesai
             $table->timestamps();
@@ -99,6 +101,11 @@ return new class extends Migration
             $table->decimal('total_upah', 15, 2)->default(0);
             $table->timestamps();
         });
+
+        // Seeder
+        Artisan::call('db:seed', [
+            '--class' => 'DatabaseSeeder',
+        ]);
     }
 
     public function down(): void
@@ -110,7 +117,7 @@ return new class extends Migration
         Schema::dropIfExists('batch_bahan');
         Schema::dropIfExists('batch_produksi');
         Schema::dropIfExists('produk_bahans');
-        Schema::dropIfExists('produk');
+        Schema::dropIfExists('produks');
         Schema::dropIfExists('materials');
     }
 };

@@ -9,8 +9,6 @@ use Illuminate\Notifications\Notifiable;
 class Produk extends Model
 {
     use HasFactory, Notifiable;
-    // nama tabel
-    protected $table = 'produk';
 
     protected $fillable = [
         'nama',
