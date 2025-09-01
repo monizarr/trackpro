@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Produk;
+use App\Models\ProsesProduksi;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -50,6 +51,29 @@ class DatabaseSeeder extends Seeder
                 'status' => 'active',
                 'created_at' => now()
             ]
+        ]);
+
+        ProsesProduksi::insert([
+            [
+                'nama_proses' => 'Potong',
+                'urutan' => 1,
+            ],
+            [
+                'nama_proses' => 'Jahit',
+                'urutan' => 2,
+            ],
+            [
+                'nama_proses' => 'Lipat',
+                'urutan' => 3,
+            ],
+            [
+                'nama_proses' => 'QC',
+                'urutan' => 4,
+            ],
+            [
+                'nama_proses' => 'Selesai',
+                'urutan' => 5,
+            ],
         ]);
     }
 }

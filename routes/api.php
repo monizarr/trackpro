@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
 
-
 Route::get('/batch-production/{productId}', [BatchProductionController::class, 'getBatchProductions']);
 Route::post('/batch-production', [BatchProductionController::class, 'storeBatchProduction']);
+
+Route::get('/production/{productId}/{batchId}', [BatchProductionController::class, 'getProductions']);

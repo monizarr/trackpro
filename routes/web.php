@@ -21,6 +21,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{id}', function () {
             return Inertia::render('products/show');
         })->name('products.show');
+        Route::get('/{id}/production/{id_product}', function () {
+            return Inertia::render('production/index');
+        })->name('products.production.index');
     });
 });
 

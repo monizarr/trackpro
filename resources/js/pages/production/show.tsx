@@ -65,7 +65,7 @@ const columns: ColumnDef<BatchProduction>[] = [
                 {/* <img src="https://picsum.photos/300/200" alt={row.original.nama} className="w-20 h-20 object-cover rounded mr-2" /> */}
                 <a
                     className="px-2 py-1 border dark:border-zinc-700 rounded text-left hover:bg-gray-100 dark:hover:bg-zinc-800"
-                    href={`${row.original.produk_id}/production/${row.original.id}`}
+                    href={`production/${row.original.id}`}
                 >
                     {row.original.kode_batch}
                 </a>

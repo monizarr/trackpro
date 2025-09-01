@@ -42,4 +42,16 @@ class BatchProductionController extends Controller
             'message' => 'Berhasil'
         ]);
     }
+
+    public function getProductions($productId, $batchId)
+    {
+        $productions = BatchProduction::where('produk_id', $productId)
+            ->where('batch_id', $batchId)
+            ->get();
+
+        return response()->json([
+            'data' => $productions,
+            'message' => 'Berhasil'
+        ]);
+    }
 }

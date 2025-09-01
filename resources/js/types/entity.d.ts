@@ -11,6 +11,7 @@ export type Product = {
 
 export type BatchProduction = {
     id: number;
+    kode_batch: string;
     produk_id: number;
     tgl_mulai: string;
     tgl_selesai: string;
