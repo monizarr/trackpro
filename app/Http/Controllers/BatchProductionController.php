@@ -46,8 +46,10 @@ class BatchProductionController extends Controller
     public function getProductions($productId, $batchId)
     {
         $productions = BatchProduction::where('produk_id', $productId)
-            ->where('batch_id', $batchId)
-            ->get();
+            ->join('produks', 'produks.id', '=', 'batch_produksi.produk_id')
+            ->where('batch_produksi.id', $batchId)
+            ->select('batch_produksi.*', 'produks.*', 'produks.nama as nama_produk')
+            ->first();
 
         return response()->json([
             'data' => $productions,
