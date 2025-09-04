@@ -19,3 +19,13 @@ export type BatchProduction = {
     status: string;
     nama_produk: string;
 };
+
+export type Production = {
+    id: number;
+    produk_id: number;
+    nama_proses: string;
+    tipe: string;
+    jumlah: number;
+    ditugaskan: string | null;
+    data?: [];
+};

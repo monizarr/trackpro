@@ -55,24 +55,28 @@ class DatabaseSeeder extends Seeder
 
         ProsesProduksi::insert([
             [
+                'nama_proses' => 'Gudang',
+                'deskripsi' => 'Proses penyimpanan bahan baku.',
+            ],
+            [
                 'nama_proses' => 'Potong',
-                'urutan' => 1,
+                'deskripsi' => 'Proses pemotongan bahan baku.',
             ],
             [
                 'nama_proses' => 'Jahit',
-                'urutan' => 2,
+                'deskripsi' => 'Proses penjahitan bahan baku.',
             ],
             [
                 'nama_proses' => 'Lipat',
-                'urutan' => 3,
+                'deskripsi' => 'Proses pelipatan bahan baku.',
             ],
             [
                 'nama_proses' => 'QC',
-                'urutan' => 4,
+                'deskripsi' => 'Proses pengendalian kualitas bahan baku.',
             ],
             [
-                'nama_proses' => 'Selesai',
-                'urutan' => 5,
+                'nama_proses' => 'Stok',
+                'deskripsi' => 'Proses pengendalian stok bahan baku.',
             ],
         ]);
     }

@@ -10,6 +10,14 @@ class ProsesProduksi extends Model
 
     protected $fillable = [
         'nama_proses',
-        'urutan',
+        'tipe',
+        'jumlah',
+        'ditugaskan',
+        'jumlah'
     ];
+
+    public function produks()
+    {
+        return $this->belongsTo(Produk::class, 'id');
+    }
 }

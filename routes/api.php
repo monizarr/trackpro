@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProsesProduksiController;
 use App\Http\Controllers\BatchProductionController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
@@ -16,3 +17,5 @@ Route::get('/batch-production/{productId}', [BatchProductionController::class, '
 Route::post('/batch-production', [BatchProductionController::class, 'storeBatchProduction']);
 
 Route::get('/production/{productId}/{batchId}', [BatchProductionController::class, 'getProductions']);
+
+Route::get('/proses-produksi/{productId}/{batchId}', [ProsesProduksiController::class, 'get']);

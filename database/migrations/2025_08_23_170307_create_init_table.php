@@ -65,8 +65,7 @@ return new class extends Migration
         Schema::create('proses_produksi', function (Blueprint $table) {
             $table->id();
             $table->string('nama_proses');
-            $table->integer('urutan'); // untuk urutan workflow
-            $table->timestamps();
+            $table->string('deskripsi')->nullable();
         });
 
         // Pekerja
