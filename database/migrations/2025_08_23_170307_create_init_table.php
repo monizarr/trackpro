@@ -72,8 +72,9 @@ return new class extends Migration
         Schema::create('pekerja', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('jenis')->nullable(); // contoh: tukang potong, penjahit, QC
-            $table->decimal('rate_per_unit', 12, 2)->default(0);
+            $table->integer('jabatan');
+            $table->decimal('upah', 12, 2)->default(0);
+            $table->string('wa')->nullable();
             $table->timestamps();
         });
 
@@ -85,8 +86,8 @@ return new class extends Migration
             $table->foreignId('pekerja_id')->constrained('pekerja')->onDelete('cascade');
             $table->dateTime('tgl_mulai')->nullable();
             $table->dateTime('tgl_selesai')->nullable();
-            $table->integer('jumlah_input')->default(0);
-            $table->integer('jumlah_output')->default(0);
+            $table->string('tipe');
+            $table->integer('jumlah')->default(0);
             $table->string('status')->default('in_progress'); // in_progress, done, failed
             $table->timestamps();
         });

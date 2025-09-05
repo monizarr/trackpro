@@ -28,23 +28,15 @@ const batchId = window.location.pathname.split('/')[4];
 export default function ProductionPage() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
-    const [produksi, setProduksi] = useState<Production>({
-        id: Number(batchId),
-        produk_id: Number(productId),
-        nama_proses: 'gudang',
-        tipe: 'input',
-        jumlah: 0,
-        ditugaskan: null,
-        data: [],
-    });
+    const [produksi, setProduksi] = useState<any>([]);
 
     const today = new Date();
 
     useEffect(() => {
-        axios.get(`/api/proses-produksi/${produksi.produk_id}/${produksi.id}`)
+        axios.get(`/api/proses-produksi/${productId}/${batchId}`)
             .then((response) => {
+                console.log(`/api/proses-produksi/${productId}/${batchId}`);
                 setProduksi(response.data.data);
-                console.log("produksi =>", response.data.data);
             })
             .catch((error) => {
                 console.error('Error fetching produksi:', error);
@@ -52,6 +44,38 @@ export default function ProductionPage() {
     }, []);
 
 
+    const handleInputSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const data = {
+            batch_id: batchId,
+            proses_id: formData.get('proses_id'),
+            tipe: formData.get('tipe'),
+            tgl_mulai: `${(formData.get('tgl_mulai') as string).replace('T', ' ')}:00`,
+            tgl_selesai: `${(formData.get('tgl_selesai') as string).replace('T', ' ')}:00`,
+            pekerja_id: formData.get('pekerja'),
+            jumlah: formData.get('jumlah'),
+        };
+        console.log("data =>", data);
+        axios.post('/api/batch-proses-produksi', data)
+            .then((response) => {
+                console.log('Success:', response.data);
+                // refresh data
+                axios.get(`/api/proses-produksi/${productId}/${batchId}`)
+                    .then((response) => {
+                        console.log(`/api/proses-produksi/${productId}/${batchId}`);
+                        setProduksi(response.data.data);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching produksi:', error);
+                    });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        e.currentTarget.reset();
+        document.getElementById('drawer-close-btn')?.click();
+    }
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Produk" />
@@ -102,163 +126,6 @@ export default function ProductionPage() {
                 <div className="w-full">
                     <div className="flex justify-between">
                         <Link href={`/products/${productId}`}>{'<<'} Back</Link>
-                        <Dialog>
-                            <form>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline">Barang Masuk</Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>Input Barang</DialogTitle>
-                                        <DialogDescription>
-                                            Masukkan informasi barang masuk.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="grid gap-4">
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="waktu">Waktu</Label>
-                                            <Input
-                                                id="waktu"
-                                                name="waktu"
-                                                type="datetime-local"
-                                                defaultValue={new Date().toISOString().slice(0, 16)}
-                                                required
-                                            />
-                                        </div>
-                                        {/* input jumlah */}
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="jumlah">Jumlah</Label>
-                                            <div className="flex">
-                                                <Input
-                                                    id="jumlah"
-                                                    name="jumlah"
-                                                    type="number"
-                                                    min="1"
-                                                    placeholder="0"
-                                                    required
-                                                />
-                                                <select
-                                                    className="ml-2 border rounded px-2 py-2 text-sm"
-                                                    id="satuan"
-                                                    name="satuan"
-                                                >
-                                                    <option value="pcs">Pcs</option>
-                                                    <option value="roll">Roll</option>
-                                                    <option value="lusin">Lusin</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="tipe_proses">Tipe Proses</Label>
-                                            <select
-                                                className="w-full border rounded px-3 py-2 text-sm"
-                                                id="tipe_proses"
-                                                name="tipe_proses"
-                                                required
-                                            >
-                                                <option value="">Pilih Tipe</option>
-                                                <option value="potong">Potong</option>
-                                                <option value="jahit">Jahit</option>
-                                                <option value="lipat">Lipat</option>
-                                                <option value="qc">QC</option>
-                                                <option value="stok">Stok</option>
-
-                                            </select>
-                                        </div>
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="pj">Penanggung Jawab</Label>
-                                            <select
-                                                className="w-full border rounded px-3 py-2 text-sm"
-                                                id="pj"
-                                                name="pj"
-                                                required
-                                            >
-                                                <option value="">Pilih</option>
-                                                <option value="Ka. Produksi">Ka. Produksi</option>
-                                                <option value="Bondan">Bondan</option>
-                                                <option value="Amin">Amin</option>
-                                                <option value="Sofyan">Sofyan</option>
-                                                <option value="Budi">Budi</option>
-                                                <option value="Halim">Halim</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <DialogFooter>
-                                        <DialogClose asChild>
-                                            <Button variant="outline">Cancel</Button>
-                                        </DialogClose>
-                                        <Button type="submit">Save changes</Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </form>
-                        </Dialog>
-                        <Drawer>
-                            <DrawerTrigger className="hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-input bg-background shadow-xs hover:bg-accent px-4 py-2 mb-4 cursor-pointer">
-                                Tambah Produksi
-                            </DrawerTrigger>
-                            <DrawerContent>
-                                <form
-                                    className='px-4'
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        // const formData = new FormData(e.currentTarget);
-                                        // const data = {
-                                        //     produk_id: produk.id,
-                                        //     tgl_mulai: `${(formData.get('tanggal_mulai') as string).replace('T', ' ')}:00`,
-                                        //     jumlah_target: parseInt(formData.get('jumlah_target') as string),
-                                        //     status: 'draft',
-                                        // };
-                                        // console.log("data =>", data);
-                                        // handleSubmit(data as BatchProduction);
-                                        e.currentTarget.reset();
-                                        document.getElementById('drawer-close-btn')?.click();
-                                    }}
-                                >
-                                    <DrawerHeader>
-                                        <DrawerTitle>Buat Produksi</DrawerTitle>
-                                        <DrawerDescription>Buat Produksi Baru</DrawerDescription>
-                                    </DrawerHeader>
-
-                                    <div className="mb-4 flex gap-6">
-                                        <div className='w-full'>
-                                            <Label htmlFor="tanggal_mulai" className="block text-sm font-medium">
-                                                Tanggal Mulai
-                                            </Label>
-                                            <Input
-                                                id="tanggal_mulai"
-                                                name="tanggal_mulai"
-                                                type="datetime-local"
-                                                defaultValue={(() => {
-                                                    const wibTime = new Date(today.getTime() + (7 * 60 * 60 * 1000));
-                                                    return wibTime.toISOString().slice(0, 16);
-                                                })()}
-                                                required
-                                            />
-                                        </div>
-                                        <div className='w-full'>
-                                            <Label htmlFor="jumlah_target" className="block text-sm font-medium">
-                                                Jumlah Target (PCS)
-                                            </Label>
-                                            <Input
-                                                id="jumlah_target"
-                                                name="jumlah_target"
-                                                type="number"
-                                                required
-                                                autoFocus
-                                            />
-                                        </div>
-                                    </div>
-                                    <DrawerFooter>
-                                        <div className="flex gap-6">
-                                            <DrawerClose id="drawer-close-btn" className='flex-1'>
-                                                <Button type="button" variant="outline" className='w-full'>Cancel</Button>
-                                            </DrawerClose>
-                                            <Button type="submit" className='flex-1'>Buat</Button>
-                                        </div>
-                                    </DrawerFooter>
-                                </form>
-                            </DrawerContent>
-                        </Drawer>
                     </div>
                     <Card className="w-full">
                         <CardHeader>
@@ -267,222 +134,247 @@ export default function ProductionPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="">
-                                <Dialog>
-                                    <DialogTrigger className="hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-input bg-background shadow-xs hover:bg-accent px-4 py-2 mb-4 cursor-pointer">Masuk</DialogTrigger>
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>Barang Masuk</DialogTitle>
-                                            <DialogDescription>
-                                                Silakan masukkan informasi barang masuk.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <form>
-                                            {/* waktu, pj, jumlah, tipe proses */}
-                                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                                <div>
-                                                    <Label htmlFor="waktu" className="block text-sm font-medium">
-                                                        Waktu
-                                                    </Label>
+                                <div className="flex gap-4">
+                                    {/* input barang */}
+                                    <Dialog>
+                                        <DialogTrigger className="hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-input bg-background shadow-xs hover:bg-accent px-4 py-2 mb-4 cursor-pointer">Masuk</DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Barang Masuk</DialogTitle>
+                                                <DialogDescription>
+                                                    Silakan masukkan informasi barang masuk.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <form onSubmit={handleInputSubmit}>
+                                                {/* waktu, pj, jumlah, tipe proses */}
+                                                <div className="grid grid-cols-2 gap-4 mb-4">
                                                     <Input
-                                                        id="waktu"
-                                                        name="waktu"
-                                                        type="datetime-local"
-                                                        defaultValue={new Date().toISOString().slice(0, 16)}
+                                                        id="tipe"
+                                                        name="tipe"
+                                                        type="hidden"
+                                                        defaultValue={"in"}
                                                         required
                                                     />
-                                                </div>
-                                                <div>
-                                                    <Label htmlFor="tipe_proses" className="block text-sm font-medium">
-                                                        Tipe Proses
-                                                    </Label>
-                                                    <select
-                                                        className="w-full border rounded px-3 py-2 text-sm"
-                                                        id="tipe_proses"
-                                                        name="tipe_proses"
-                                                        required
-                                                    >
-                                                        <option value="">Pilih Tipe</option>
-                                                        <option value="gudang">Gudang</option>
-                                                        <option value="potong">Potong</option>
-                                                        <option value="jahit">Jahit</option>
-                                                        <option value="lipat">Lipat</option>
-                                                        <option value="qc">QC</option>
-                                                        <option value="stok">Stok</option>
-
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <Label htmlFor="jumlah" className="block text-sm font-medium">
-                                                        Jumlah
-                                                    </Label>
-                                                    <div className="flex">
+                                                    <div>
+                                                        <Label htmlFor="tgl_mulai" className="block text-sm font-medium">
+                                                            Waktu mulai
+                                                        </Label>
                                                         <Input
-                                                            id="jumlah"
-                                                            name="jumlah"
-                                                            type="number"
-                                                            min="1"
-                                                            placeholder="0"
+                                                            id="tgl_mulai"
+                                                            name="tgl_mulai"
+                                                            type="datetime-local"
+                                                            defaultValue={new Date().toISOString().slice(0, 16)}
                                                             required
                                                         />
                                                     </div>
-                                                </div>
-                                                <div>
-                                                    <Label htmlFor="pj" className="block text-sm font-medium">
-                                                        Penanggung Jawab
-                                                    </Label>
-                                                    <select
-                                                        className="w-full border rounded px-3 py-2 text-sm"
-                                                        id="pj"
-                                                        name="pj"
-                                                        required
-                                                    >
-                                                        <option value="">Pilih</option>
-                                                        <option value="Ka. Produksi">Ka. Produksi</option>
-                                                        <option value="Bondan">Bondan</option>
-                                                        <option value="Amin">Amin</option>
-                                                        <option value="Sofyan">Sofyan</option>
-                                                        <option value="Budi">Budi</option>
-                                                        <option value="Halim">Halim</option>
-                                                    </select>
-                                                </div>
-                                                <div className="col-span-2">
-                                                    <Button type="submit" className="w-full">
-                                                        Simpan
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </DialogContent>
-                                </Dialog>
-                                <Dialog>
-                                    <DialogTrigger className="hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-input bg-background shadow-xs hover:bg-accent px-4 py-2 mb-4 cursor-pointer">Keluar</DialogTrigger>
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>Barang Keluar</DialogTitle>
-                                            <DialogDescription>
-                                                Silakan masukkan informasi barang Keluar.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <form>
-                                            {/* waktu, pj, jumlah, tipe proses */}
-                                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                                <div>
-                                                    <Label htmlFor="waktu" className="block text-sm font-medium">
-                                                        Waktu
-                                                    </Label>
-                                                    <Input
-                                                        id="waktu"
-                                                        name="waktu"
-                                                        type="datetime-local"
-                                                        defaultValue={new Date().toISOString().slice(0, 16)}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <Label htmlFor="pj" className="block text-sm font-medium">
-                                                        Penanggung Jawab
-                                                    </Label>
-                                                    <select
-                                                        className="w-full border rounded px-3 py-2 text-sm"
-                                                        id="pj"
-                                                        name="pj"
-                                                        required
-                                                    >
-                                                        <option value="">Pilih</option>
-                                                        <option value="Ka. Produksi">Ka. Produksi</option>
-                                                        <option value="Bondan">Bondan</option>
-                                                        <option value="Amin">Amin</option>
-                                                        <option value="Sofyan">Sofyan</option>
-                                                        <option value="Budi">Budi</option>
-                                                        <option value="Halim">Halim</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <Label htmlFor="jumlah" className="block text-sm font-medium">
-                                                        Jumlah
-                                                    </Label>
-                                                    <div className="flex">
+                                                    <div>
+                                                        <Label htmlFor="tgl_selesai" className="block text-sm font-medium">
+                                                            Waktu selesai
+                                                        </Label>
                                                         <Input
-                                                            id="jumlah"
-                                                            name="jumlah"
-                                                            type="number"
-                                                            min="1"
-                                                            placeholder="0"
+                                                            id="tgl_selesai"
+                                                            name="tgl_selesai"
+                                                            type="datetime-local"
+                                                            defaultValue={new Date().toISOString().slice(0, 16)}
                                                             required
                                                         />
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor="proses_id" className="block text-sm font-medium">
+                                                            Tipe Proses
+                                                        </Label>
                                                         <select
-                                                            className="ml-2 border rounded px-2 py-2 text-sm"
-                                                            id="satuan"
-                                                            name="satuan"
+                                                            className="w-full border rounded px-3 py-2 text-sm"
+                                                            id="proses_id"
+                                                            name="proses_id"
+                                                            required
                                                         >
-                                                            <option value="pcs">Pcs</option>
-                                                            <option value="roll">Roll</option>
-                                                            <option value="lusin">Lusin</option>
+                                                            <option value="">Pilih Tipe</option>
+                                                            <option value="1">Gudang</option>
+                                                            <option value="2">Potong</option>
+                                                            <option value="3">Jahit</option>
+                                                            <option value="4">Lipat</option>
+                                                            <option value="5">QC</option>
+                                                            <option value="6">Stok</option>
+
                                                         </select>
                                                     </div>
+                                                    <div>
+                                                        <Label htmlFor="jumlah" className="block text-sm font-medium">
+                                                            Jumlah
+                                                        </Label>
+                                                        <div className="flex">
+                                                            <Input
+                                                                id="jumlah"
+                                                                name="jumlah"
+                                                                type="number"
+                                                                min="1"
+                                                                placeholder="0"
+                                                                required
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor="pekerja" className="block text-sm font-medium">
+                                                            Penanggung Jawab
+                                                        </Label>
+                                                        <select
+                                                            className="w-full border rounded px-3 py-2 text-sm"
+                                                            id="pekerja"
+                                                            name="pekerja"
+                                                            required
+                                                        >
+                                                            <option value="">Pilih</option>
+                                                            <option value="1">Ka. Produksi</option>
+                                                            <option value="2">Bondan</option>
+                                                            <option value="3">Amin</option>
+                                                            <option value="4">Sofyan</option>
+                                                            <option value="5">Budi</option>
+                                                            <option value="6">Halim</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="col-span-2">
+                                                        <Button type="submit" className="w-full">
+                                                            Simpan
+                                                        </Button>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <Label htmlFor="tipe_proses" className="block text-sm font-medium">
-                                                        Tipe Proses
-                                                    </Label>
-                                                    <select
-                                                        className="w-full border rounded px-3 py-2 text-sm"
-                                                        id="tipe_proses"
-                                                        name="tipe_proses"
-                                                        required
-                                                    >
-                                                        <option value="">Pilih Tipe</option>
-                                                        <option value="potong">Potong</option>
-                                                        <option value="jahit">Jahit</option>
-                                                        <option value="lipat">Lipat</option>
-                                                        <option value="qc">QC</option>
-                                                        <option value="stok">Stok</option>
+                                            </form>
+                                        </DialogContent>
+                                    </Dialog>
 
-                                                    </select>
+                                    {/* Dialog untuk barang keluar */}
+                                    <Dialog>
+                                        <DialogTrigger className="hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-input bg-background shadow-xs hover:bg-accent px-4 py-2 mb-4 cursor-pointer">Keluar</DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Barang Keluar</DialogTitle>
+                                                <DialogDescription>
+                                                    Silakan masukkan informasi barang keluar.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <form onSubmit={handleInputSubmit}>
+                                                {/* waktu, pj, jumlah, tipe proses */}
+                                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                                    <Input
+                                                        id="tipe"
+                                                        name="tipe"
+                                                        type="hidden"
+                                                        defaultValue={"out"}
+                                                        required
+                                                    />
+                                                    <div>
+                                                        <Label htmlFor="tgl_mulai" className="block text-sm font-medium">
+                                                            Waktu mulai
+                                                        </Label>
+                                                        <Input
+                                                            id="tgl_mulai"
+                                                            name="tgl_mulai"
+                                                            type="datetime-local"
+                                                            defaultValue={new Date().toISOString().slice(0, 16)}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor="tgl_selesai" className="block text-sm font-medium">
+                                                            Waktu selesai
+                                                        </Label>
+                                                        <Input
+                                                            id="tgl_selesai"
+                                                            name="tgl_selesai"
+                                                            type="datetime-local"
+                                                            defaultValue={new Date().toISOString().slice(0, 16)}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor="proses_id" className="block text-sm font-medium">
+                                                            Tipe Proses
+                                                        </Label>
+                                                        <select
+                                                            className="w-full border rounded px-3 py-2 text-sm"
+                                                            id="proses_id"
+                                                            name="proses_id"
+                                                            required
+                                                        >
+                                                            <option value="">Pilih Tipe</option>
+                                                            <option value="1">Gudang</option>
+                                                            <option value="2">Potong</option>
+                                                            <option value="3">Jahit</option>
+                                                            <option value="4">Lipat</option>
+                                                            <option value="5">QC</option>
+                                                            <option value="6">Stok</option>
+
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor="jumlah" className="block text-sm font-medium">
+                                                            Jumlah
+                                                        </Label>
+                                                        <div className="flex">
+                                                            <Input
+                                                                id="jumlah"
+                                                                name="jumlah"
+                                                                type="number"
+                                                                min="1"
+                                                                placeholder="0"
+                                                                required
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor="pekerja" className="block text-sm font-medium">
+                                                            Penanggung Jawab
+                                                        </Label>
+                                                        <select
+                                                            className="w-full border rounded px-3 py-2 text-sm"
+                                                            id="pekerja"
+                                                            name="pekerja"
+                                                            required
+                                                        >
+                                                            <option value="">Pilih</option>
+                                                            <option value="1">Ka. Produksi</option>
+                                                            <option value="2">Bondan</option>
+                                                            <option value="3">Amin</option>
+                                                            <option value="4">Sofyan</option>
+                                                            <option value="5">Budi</option>
+                                                            <option value="6">Halim</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="col-span-2">
+                                                        <Button type="submit" className="w-full">
+                                                            Simpan
+                                                        </Button>
+                                                    </div>
                                                 </div>
-                                                <div className="col-span-2">
-                                                    <Button type="submit" className="w-full">
-                                                        Simpan
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </DialogContent>
-                                </Dialog>
+                                            </form>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+
+                                {/* Proses  */}
                                 <div className='flex gap-4 overflow-x-auto'>
                                     <div className='min-w-[180px]'>
                                         <div className="bg-primary text-white px-3 py-2 rounded text-center w-full">
                                             Gudang
                                         </div>
                                         <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            <div className='pb-2 bg-red-50 p-1 rounded-md'>
-                                                <p className='text-xs text-gray-800'>
-                                                    Sabtu, <br /> 02-09-2025
-                                                </p>
-                                                <div className=" mt-2">
-                                                    <Badge variant="secondary">
-                                                        <User className='inline mb-1 mr-1' />
-                                                        Ka. Produksi
-                                                    </Badge>
-                                                    <Badge variant="secondary" className='bg-red-700 text-white'>
-                                                        <PackageOpen className='inline mb-1 mr-1' />
-                                                        4 Roll
-                                                    </Badge>
-                                                </div>
-                                            </div>
-                                            <div className='pb-2 bg-red-50 p-1 rounded-md'>
-                                                <p className='text-xs text-gray-800'>
-                                                    Minggu, <br /> 03-09-2025
-                                                </p>
-                                                <div className=" mt-2">
-                                                    <Badge variant="secondary">
-                                                        <User className='inline mb-1 mr-1' /> Ka. Produksi</Badge>
-                                                    <Badge variant="secondary" className='bg-red-700 text-white'>
-                                                        <PackageOpen className='inline mb-1 mr-1' />
-                                                        1 Roll
-                                                    </Badge>
-                                                </div>
-                                            </div>
+                                            {
+                                                produksi?.length === 0 ? (
+                                                    <div className='text-center text-sm text-gray-500'>
+                                                        Tidak ada data
+                                                    </div>
+                                                ) : (
+                                                    produksi[0].data?.map((prod: any) => (
+                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                            weekday: 'long',
+                                                            year: 'numeric',
+                                                            month: '2-digit',
+                                                            day: '2-digit'
+                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Roll`} />
+                                                    ))
+                                                )
+                                            }
                                         </div>
                                     </div>
                                     <div className='min-w-[180px]'>
@@ -491,18 +383,18 @@ export default function ProductionPage() {
                                         </div>
                                         <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
                                             {
-                                                produksi.data.length === 0 ? (
+                                                produksi?.length === 0 ? (
                                                     <div className='text-center text-sm text-gray-500'>
                                                         Tidak ada data
                                                     </div>
                                                 ) : (
-                                                    produksi.data.map((prod: any) => (
+                                                    produksi[1].data?.map((prod: any) => (
                                                         <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
                                                             weekday: 'long',
                                                             year: 'numeric',
                                                             month: '2-digit',
                                                             day: '2-digit'
-                                                        })} pj={prod.ditugaskan || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
                                                     ))
                                                 )
                                             }
@@ -513,9 +405,22 @@ export default function ProductionPage() {
                                             Jahit
                                         </div>
                                         <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            <ProcessProductionCard type="input" time='Sabtu, 02-09-2025' pj='Sofyan' item='100 Pcs' />
-                                            <ProcessProductionCard type="input" time='Sabtu, 02-09-2025' pj='Budi' item='100 Pcs' />
-                                            <ProcessProductionCard type="input" time='Sabtu, 02-09-2025' pj='Halim' item='200 Pcs' />
+                                            {
+                                                produksi?.length === 0 ? (
+                                                    <div className='text-center text-sm text-gray-500'>
+                                                        Tidak ada data
+                                                    </div>
+                                                ) : (
+                                                    produksi[2].data?.map((prod: any) => (
+                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                            weekday: 'long',
+                                                            year: 'numeric',
+                                                            month: '2-digit',
+                                                            day: '2-digit'
+                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                    ))
+                                                )
+                                            }
                                         </div>
                                     </div>
                                     <div className='min-w-[180px]'>
@@ -523,32 +428,22 @@ export default function ProductionPage() {
                                             Lipat
                                         </div>
                                         <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            <div className='pb-2 bg-green-50 p-1 rounded-md'>
-                                                <p className='text-xs text-gray-800'>
-                                                    Sabtu, <br /> 02-09-2025
-                                                </p>
-                                                <div className=" mt-2">
-                                                    <Badge variant="secondary">
-                                                        <User className='inline mb-1 mr-1' /> Ka. Produksi</Badge>
-                                                    <Badge variant="secondary" className='bg-green-700 text-white'>
-                                                        <PackageOpen className='inline mb-1 mr-1' />
-                                                        400 Pcs
-                                                    </Badge>
-                                                </div>
-                                            </div>
-                                            <div className='pb-2 bg-red-50 p-1 rounded-md'>
-                                                <p className='text-xs text-gray-800'>
-                                                    Minggu, <br /> 03-09-2025
-                                                </p>
-                                                <div className=" mt-2">
-                                                    <Badge variant="secondary">
-                                                        <User className='inline mb-1 mr-1' /> Ka. Produksi</Badge>
-                                                    <Badge variant="secondary" className='bg-red-700 text-white'>
-                                                        <PackageOpen className='inline mb-1 mr-1' />
-                                                        100 Pcs
-                                                    </Badge>
-                                                </div>
-                                            </div>
+                                            {
+                                                produksi?.length === 0 ? (
+                                                    <div className='text-center text-sm text-gray-500'>
+                                                        Tidak ada data
+                                                    </div>
+                                                ) : (
+                                                    produksi[3].data?.map((prod: any) => (
+                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                            weekday: 'long',
+                                                            year: 'numeric',
+                                                            month: '2-digit',
+                                                            day: '2-digit'
+                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                    ))
+                                                )
+                                            }
                                         </div>
                                     </div>
                                     <div className='min-w-[180px]'>
@@ -556,32 +451,22 @@ export default function ProductionPage() {
                                             QC
                                         </div>
                                         <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            <div className='pb-2 bg-green-50 p-1 rounded-md'>
-                                                <p className='text-xs text-gray-800'>
-                                                    Sabtu, <br /> 02-09-2025
-                                                </p>
-                                                <div className=" mt-2">
-                                                    <Badge variant="secondary">
-                                                        <User className='inline mb-1 mr-1' /> Ka. Produksi</Badge>
-                                                    <Badge variant="secondary" className='bg-green-700 text-white'>
-                                                        <PackageOpen className='inline mb-1 mr-1' />
-                                                        400 Pcs
-                                                    </Badge>
-                                                </div>
-                                            </div>
-                                            <div className='pb-2 bg-red-50 p-1 rounded-md'>
-                                                <p className='text-xs text-gray-800'>
-                                                    Minggu, <br /> 03-09-2025
-                                                </p>
-                                                <div className=" mt-2">
-                                                    <Badge variant="secondary">
-                                                        <User className='inline mb-1 mr-1' /> Ka. Produksi</Badge>
-                                                    <Badge variant="secondary" className='bg-red-700 text-white'>
-                                                        <PackageOpen className='inline mb-1 mr-1' />
-                                                        100 Pcs
-                                                    </Badge>
-                                                </div>
-                                            </div>
+                                            {
+                                                produksi?.length === 0 ? (
+                                                    <div className='text-center text-sm text-gray-500'>
+                                                        Tidak ada data
+                                                    </div>
+                                                ) : (
+                                                    produksi[4].data?.map((prod: any) => (
+                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                            weekday: 'long',
+                                                            year: 'numeric',
+                                                            month: '2-digit',
+                                                            day: '2-digit'
+                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                    ))
+                                                )
+                                            }
                                         </div>
                                     </div>
                                     <div className='min-w-[180px]'>
@@ -589,19 +474,22 @@ export default function ProductionPage() {
                                             Stok
                                         </div>
                                         <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            <div className='pb-2 bg-green-50 p-1 rounded-md'>
-                                                <p className='text-xs text-gray-800'>
-                                                    Sabtu, <br /> 02-09-2025
-                                                </p>
-                                                <div className=" mt-2">
-                                                    <Badge variant="secondary">
-                                                        <User className='inline mb-1 mr-1' /> Ka. Produksi</Badge>
-                                                    <Badge variant="secondary" className='bg-green-700 text-white'>
-                                                        <PackageOpen className='inline mb-1 mr-1' />
-                                                        400 Pcs
-                                                    </Badge>
-                                                </div>
-                                            </div>
+                                            {
+                                                produksi?.length === 0 ? (
+                                                    <div className='text-center text-sm text-gray-500'>
+                                                        Tidak ada data
+                                                    </div>
+                                                ) : (
+                                                    produksi[5].data?.map((prod: any) => (
+                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                            weekday: 'long',
+                                                            year: 'numeric',
+                                                            month: '2-digit',
+                                                            day: '2-digit'
+                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                    ))
+                                                )
+                                            }
                                         </div>
                                     </div>
                                 </div>
