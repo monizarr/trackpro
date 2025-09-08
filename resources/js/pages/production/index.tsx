@@ -29,17 +29,23 @@ export default function ProductionPage() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
     const [produksi, setProduksi] = useState<any>([]);
-
-    const today = new Date();
+    const [pekerja, setPekerja] = useState<any>([]);
 
     useEffect(() => {
         axios.get(`/api/proses-produksi/${productId}/${batchId}`)
             .then((response) => {
-                console.log(`/api/proses-produksi/${productId}/${batchId}`);
                 setProduksi(response.data.data);
             })
             .catch((error) => {
                 console.error('Error fetching produksi:', error);
+            });
+
+        axios.get('/api/pekerja')
+            .then((response) => {
+                setPekerja(response.data.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching pekerja:', error);
             });
     }, []);
 
@@ -366,12 +372,19 @@ export default function ProductionPage() {
                                                     </div>
                                                 ) : (
                                                     produksi[0].data?.map((prod: any) => (
-                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit'
-                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Roll`} />
+                                                        <ProcessProductionCard
+                                                            key={prod.id}
+                                                            id={prod.id}
+                                                            type={prod.tipe}
+                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: '2-digit',
+                                                                day: '2-digit',
+                                                            })}
+                                                            pj={prod.nama_pekerja || 'N/A'}
+                                                            item={`${prod.jumlah} Roll`}
+                                                            data={prod} />
                                                     ))
                                                 )
                                             }
@@ -389,12 +402,19 @@ export default function ProductionPage() {
                                                     </div>
                                                 ) : (
                                                     produksi[1].data?.map((prod: any) => (
-                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit'
-                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                        <ProcessProductionCard
+                                                            key={prod.id}
+                                                            id={prod.id}
+                                                            type={prod.tipe}
+                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: '2-digit',
+                                                                day: '2-digit',
+                                                            })}
+                                                            pj={prod.nama_pekerja || 'N/A'}
+                                                            item={`${prod.jumlah} Roll`}
+                                                            data={prod} />
                                                     ))
                                                 )
                                             }
@@ -412,12 +432,19 @@ export default function ProductionPage() {
                                                     </div>
                                                 ) : (
                                                     produksi[2].data?.map((prod: any) => (
-                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit'
-                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                        <ProcessProductionCard
+                                                            key={prod.id}
+                                                            id={prod.id}
+                                                            type={prod.tipe}
+                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: '2-digit',
+                                                                day: '2-digit',
+                                                            })}
+                                                            pj={prod.nama_pekerja || 'N/A'}
+                                                            item={`${prod.jumlah} Roll`}
+                                                            data={prod} />
                                                     ))
                                                 )
                                             }
@@ -435,12 +462,20 @@ export default function ProductionPage() {
                                                     </div>
                                                 ) : (
                                                     produksi[3].data?.map((prod: any) => (
-                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit'
-                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                        <ProcessProductionCard
+                                                            key={prod.id}
+                                                            id={prod.id}
+                                                            type={prod.tipe}
+                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: '2-digit',
+                                                                day: '2-digit',
+                                                            })}
+                                                            pj={prod.nama_pekerja || 'N/A'}
+                                                            item={`${prod.jumlah} Pcs`}
+                                                            data={prod}
+                                                        />
                                                     ))
                                                 )
                                             }
@@ -458,12 +493,19 @@ export default function ProductionPage() {
                                                     </div>
                                                 ) : (
                                                     produksi[4].data?.map((prod: any) => (
-                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit'
-                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                        <ProcessProductionCard
+                                                            key={prod.id}
+                                                            id={prod.id}
+                                                            type={prod.tipe}
+                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: '2-digit',
+                                                                day: '2-digit',
+                                                            })}
+                                                            pj={prod.nama_pekerja || 'N/A'}
+                                                            item={`${prod.jumlah} Roll`}
+                                                            data={prod} />
                                                     ))
                                                 )
                                             }
@@ -481,12 +523,19 @@ export default function ProductionPage() {
                                                     </div>
                                                 ) : (
                                                     produksi[5].data?.map((prod: any) => (
-                                                        <ProcessProductionCard key={prod.id} type={prod.tipe} time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit'
-                                                        })} pj={prod.nama_pekerja || 'N/A'} item={`${prod.jumlah} Pcs`} />
+                                                        <ProcessProductionCard
+                                                            key={prod.id}
+                                                            id={prod.id}
+                                                            type={prod.tipe}
+                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                                weekday: 'long',
+                                                                year: 'numeric',
+                                                                month: '2-digit',
+                                                                day: '2-digit',
+                                                            })}
+                                                            pj={prod.nama_pekerja || 'N/A'}
+                                                            item={`${prod.jumlah} Roll`}
+                                                            data={prod} />
                                                     ))
                                                 )
                                             }
