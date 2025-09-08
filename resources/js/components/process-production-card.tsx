@@ -1,33 +1,32 @@
-import React, { useEffect } from 'react'
-import { Badge } from './ui/badge'
-import { PackageOpen, User } from 'lucide-react'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
+import { PackageOpen, User } from 'lucide-react';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 export default function ProcessProductionCard({ id, type, time, pj, item, data }: { id: number, type: 'in' | 'out', time: string, pj: string, item: string, data: any }) {
     return (
         <>
             <Dialog>
                 <DialogTrigger asChild>
-                    <div className={`pb-2 p-1 rounded-md ${data.tipe === 'in' ? 'bg-green-50' : 'bg-red-50'}`}>
+                    <div className={`pb-2 p-1 rounded-md ${data?.tipe === 'in' ? 'bg-green-50' : 'bg-red-50'}`}>
                         <p className='text-xs text-gray-800'>
                             {time}
                         </p>
                         <div className=" mt-2">
                             <Badge variant="secondary">
                                 <User className='inline mb-1 mr-1' />
-                                {data.nama_pekerja}
+                                {data?.nama_pekerja}
                             </Badge>
-                            <Badge variant="secondary" className={`text-white ${data.tipe === 'in' ? 'bg-green-700' : 'bg-red-700'}`}>
+                            <Badge variant="secondary" className={`text-white ${data?.tipe === 'in' ? 'bg-green-700' : 'bg-red-700'}`}>
                                 <PackageOpen className='inline mb-1 mr-1' />
-                                {data.jumlah}
+                                {data?.jumlah}
                             </Badge>
                         </div>
                     </div>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{data.nama_pekerja}</DialogTitle>
+                        <DialogTitle>{data?.nama_pekerja}</DialogTitle>
                         <DialogDescription>
                             Silakan masukkan informasi barang masuk.
                         </DialogDescription>

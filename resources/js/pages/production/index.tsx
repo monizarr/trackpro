@@ -30,6 +30,7 @@ export default function ProductionPage() {
     const [globalFilter, setGlobalFilter] = useState("");
     const [produksi, setProduksi] = useState<any>([]);
     const [pekerja, setPekerja] = useState<any>([]);
+    const [proses, setProses] = useState<any>([]);
 
     useEffect(() => {
         axios.get(`/api/proses-produksi/${productId}/${batchId}`)
@@ -47,8 +48,15 @@ export default function ProductionPage() {
             .catch((error) => {
                 console.error('Error fetching pekerja:', error);
             });
-    }, []);
 
+        axios.get('/api/proses-produksi-list')
+            .then((response) => {
+                setProses(response.data.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching proses:', error);
+            });
+    }, []);
 
     const handleInputSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -69,7 +77,6 @@ export default function ProductionPage() {
                 // refresh data
                 axios.get(`/api/proses-produksi/${productId}/${batchId}`)
                     .then((response) => {
-                        console.log(`/api/proses-produksi/${productId}/${batchId}`);
                         setProduksi(response.data.data);
                     })
                     .catch((error) => {
@@ -82,52 +89,10 @@ export default function ProductionPage() {
         e.currentTarget.reset();
         document.getElementById('drawer-close-btn')?.click();
     }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Produk" />
-            {/* <Card className="w-full mb-6 md:w-96 flex-initial h-fit">
-                <CardHeader>
-                    <CardTitle>{produk?.nama}</CardTitle>
-                    <CardDescription>
-                        {produk.deskripsi}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {produk.gambar && (
-                        <div className="mb-4">
-                            <img
-                                src={produk.gambar}
-                                alt={produk.nama}
-                                className="w-full max-w-md h-auto rounded-lg shadow-md"
-                            />
-                        </div>
-                    )}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <Label className="text-sm font-medium">Harga</Label>
-                            <div className="text-xl font-bold">
-                                {typeof produk.harga === 'number'
-                                    ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(produk.harga)
-                                    : produk.harga}
-                            </div>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Status</Label>
-                            <div className={`text-sm ml-2 font-medium rounded-full px-3 py-1 inline-block ${produk.status === 'active' ? 'bg-green-100 text-green-800' :
-                                produk.status === 'inactive' ? 'bg-red-100 text-red-800' :
-                                    'bg-gray-100 text-gray-800'
-                                }`}>
-                                {produk.status}
-                            </div>
-                        </div>
-                    </div>
-                </CardContent>
-                <CardFooter className="flex-col gap-2">
-                    <div className="text-sm text-gray-500">
-                        SKU: {produk.sku}
-                    </div>
-                </CardFooter>
-            </Card> */}
             <div className='p-4 flex flex-col md:flex-row gap-6 w-full'>
                 <div className="w-full">
                     <div className="flex justify-between">
@@ -196,12 +161,11 @@ export default function ProductionPage() {
                                                             required
                                                         >
                                                             <option value="">Pilih Tipe</option>
-                                                            <option value="1">Gudang</option>
-                                                            <option value="2">Potong</option>
-                                                            <option value="3">Jahit</option>
-                                                            <option value="4">Lipat</option>
-                                                            <option value="5">QC</option>
-                                                            <option value="6">Stok</option>
+                                                            {
+                                                                proses.map((p: any) => (
+                                                                    <option key={p.id} value={p.id}>{p.nama_proses}</option>
+                                                                ))
+                                                            }
 
                                                         </select>
                                                     </div>
@@ -231,12 +195,11 @@ export default function ProductionPage() {
                                                             required
                                                         >
                                                             <option value="">Pilih</option>
-                                                            <option value="1">Ka. Produksi</option>
-                                                            <option value="2">Bondan</option>
-                                                            <option value="3">Amin</option>
-                                                            <option value="4">Sofyan</option>
-                                                            <option value="5">Budi</option>
-                                                            <option value="6">Halim</option>
+                                                            {
+                                                                pekerja.map((p: any) => (
+                                                                    <option key={p.id} value={p.id}>{p.nama}</option>
+                                                                ))
+                                                            }
                                                         </select>
                                                     </div>
                                                     <div className="col-span-2">
@@ -304,12 +267,11 @@ export default function ProductionPage() {
                                                             required
                                                         >
                                                             <option value="">Pilih Tipe</option>
-                                                            <option value="1">Gudang</option>
-                                                            <option value="2">Potong</option>
-                                                            <option value="3">Jahit</option>
-                                                            <option value="4">Lipat</option>
-                                                            <option value="5">QC</option>
-                                                            <option value="6">Stok</option>
+                                                            {
+                                                                proses.map((p: any) => (
+                                                                    <option key={p.id} value={p.id}>{p.nama_proses}</option>
+                                                                ))
+                                                            }
 
                                                         </select>
                                                     </div>
@@ -339,12 +301,11 @@ export default function ProductionPage() {
                                                             required
                                                         >
                                                             <option value="">Pilih</option>
-                                                            <option value="1">Ka. Produksi</option>
-                                                            <option value="2">Bondan</option>
-                                                            <option value="3">Amin</option>
-                                                            <option value="4">Sofyan</option>
-                                                            <option value="5">Budi</option>
-                                                            <option value="6">Halim</option>
+                                                            {
+                                                                pekerja.map((p: any) => (
+                                                                    <option key={p.id} value={p.id}>{p.nama}</option>
+                                                                ))
+                                                            }
                                                         </select>
                                                     </div>
                                                     <div className="col-span-2">
@@ -360,187 +321,40 @@ export default function ProductionPage() {
 
                                 {/* Proses  */}
                                 <div className='flex gap-4 overflow-x-auto'>
-                                    <div className='min-w-[180px]'>
-                                        <div className="bg-primary text-white px-3 py-2 rounded text-center w-full">
-                                            Gudang
-                                        </div>
-                                        <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            {
-                                                produksi?.length === 0 ? (
-                                                    <div className='text-center text-sm text-gray-500'>
-                                                        Tidak ada data
-                                                    </div>
-                                                ) : (
-                                                    produksi[0].data?.map((prod: any) => (
-                                                        <ProcessProductionCard
-                                                            key={prod.id}
-                                                            id={prod.id}
-                                                            type={prod.tipe}
-                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                                weekday: 'long',
-                                                                year: 'numeric',
-                                                                month: '2-digit',
-                                                                day: '2-digit',
-                                                            })}
-                                                            pj={prod.nama_pekerja || 'N/A'}
-                                                            item={`${prod.jumlah} Roll`}
-                                                            data={prod} />
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                    <div className='min-w-[180px]'>
-                                        <div className="bg-primary text-white px-3 py-2 rounded text-center">
-                                            Potong
-                                        </div>
-                                        <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            {
-                                                produksi?.length === 0 ? (
-                                                    <div className='text-center text-sm text-gray-500'>
-                                                        Tidak ada data
-                                                    </div>
-                                                ) : (
-                                                    produksi[1].data?.map((prod: any) => (
-                                                        <ProcessProductionCard
-                                                            key={prod.id}
-                                                            id={prod.id}
-                                                            type={prod.tipe}
-                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                                weekday: 'long',
-                                                                year: 'numeric',
-                                                                month: '2-digit',
-                                                                day: '2-digit',
-                                                            })}
-                                                            pj={prod.nama_pekerja || 'N/A'}
-                                                            item={`${prod.jumlah} Roll`}
-                                                            data={prod} />
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                    <div className='min-w-[180px]'>
-                                        <div className="bg-primary text-white px-3 py-2 rounded text-center">
-                                            Jahit
-                                        </div>
-                                        <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            {
-                                                produksi?.length === 0 ? (
-                                                    <div className='text-center text-sm text-gray-500'>
-                                                        Tidak ada data
-                                                    </div>
-                                                ) : (
-                                                    produksi[2].data?.map((prod: any) => (
-                                                        <ProcessProductionCard
-                                                            key={prod.id}
-                                                            id={prod.id}
-                                                            type={prod.tipe}
-                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                                weekday: 'long',
-                                                                year: 'numeric',
-                                                                month: '2-digit',
-                                                                day: '2-digit',
-                                                            })}
-                                                            pj={prod.nama_pekerja || 'N/A'}
-                                                            item={`${prod.jumlah} Roll`}
-                                                            data={prod} />
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                    <div className='min-w-[180px]'>
-                                        <div className="bg-primary text-white px-3 py-2 rounded text-center">
-                                            Lipat
-                                        </div>
-                                        <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            {
-                                                produksi?.length === 0 ? (
-                                                    <div className='text-center text-sm text-gray-500'>
-                                                        Tidak ada data
-                                                    </div>
-                                                ) : (
-                                                    produksi[3].data?.map((prod: any) => (
-                                                        <ProcessProductionCard
-                                                            key={prod.id}
-                                                            id={prod.id}
-                                                            type={prod.tipe}
-                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                                weekday: 'long',
-                                                                year: 'numeric',
-                                                                month: '2-digit',
-                                                                day: '2-digit',
-                                                            })}
-                                                            pj={prod.nama_pekerja || 'N/A'}
-                                                            item={`${prod.jumlah} Pcs`}
-                                                            data={prod}
-                                                        />
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                    <div className='min-w-[180px]'>
-                                        <div className="bg-primary text-white px-3 py-2 rounded text-center">
-                                            QC
-                                        </div>
-                                        <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            {
-                                                produksi?.length === 0 ? (
-                                                    <div className='text-center text-sm text-gray-500'>
-                                                        Tidak ada data
-                                                    </div>
-                                                ) : (
-                                                    produksi[4].data?.map((prod: any) => (
-                                                        <ProcessProductionCard
-                                                            key={prod.id}
-                                                            id={prod.id}
-                                                            type={prod.tipe}
-                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                                weekday: 'long',
-                                                                year: 'numeric',
-                                                                month: '2-digit',
-                                                                day: '2-digit',
-                                                            })}
-                                                            pj={prod.nama_pekerja || 'N/A'}
-                                                            item={`${prod.jumlah} Roll`}
-                                                            data={prod} />
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                    <div className='min-w-[180px]'>
-                                        <div className="bg-primary text-white px-3 py-2 rounded text-center">
-                                            Stok
-                                        </div>
-                                        <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
-                                            {
-                                                produksi?.length === 0 ? (
-                                                    <div className='text-center text-sm text-gray-500'>
-                                                        Tidak ada data
-                                                    </div>
-                                                ) : (
-                                                    produksi[5].data?.map((prod: any) => (
-                                                        <ProcessProductionCard
-                                                            key={prod.id}
-                                                            id={prod.id}
-                                                            type={prod.tipe}
-                                                            time={new Date(prod.created_at).toLocaleDateString('id-ID', {
-                                                                weekday: 'long',
-                                                                year: 'numeric',
-                                                                month: '2-digit',
-                                                                day: '2-digit',
-                                                            })}
-                                                            pj={prod.nama_pekerja || 'N/A'}
-                                                            item={`${prod.jumlah} Roll`}
-                                                            data={prod} />
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
+                                    {
+                                        proses.map((proses: { id: number, nama_proses: string }) => (
+                                            <div key={proses.id} className='min-w-[180px]'>
+                                                <div className="bg-primary text-white px-3 py-2 rounded text-center w-full">
+                                                    {proses.nama_proses}
+                                                </div>
+                                                <div className="border w-full p-2 min-h-[20vh] flex flex-col divide-y gap-2">
+                                                    {
+                                                        produksi?.length === 0 ? (
+                                                            <div className='text-center text-sm text-gray-500'>
+                                                                Tidak ada data
+                                                            </div>
+                                                        ) : (
+                                                            produksi[proses.id - 1]?.data?.map((prod: any) => (
+                                                                <ProcessProductionCard
+                                                                    key={prod.id}
+                                                                    id={prod.id}
+                                                                    type={prod.tipe}
+                                                                    time={new Date(prod.created_at).toLocaleDateString('id-ID', {
+                                                                        weekday: 'long',
+                                                                        year: 'numeric',
+                                                                        month: '2-digit',
+                                                                        day: '2-digit',
+                                                                    })}
+                                                                    pj={prod.nama_pekerja || 'N/A'}
+                                                                    item={`${prod.jumlah} ${proses.id === 4 ? 'Pcs' : 'Roll'}`}
+                                                                    data={prod} />
+                                                            ))
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
                                 </div>
                             </div>
                         </CardContent>

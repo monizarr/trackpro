@@ -9,6 +9,16 @@ use Illuminate\Http\Request;
 
 class ProsesProduksiController extends Controller
 {
+
+    public function index()
+    {
+        $data = ProsesProduksi::all();
+        return response()->json([
+            'data' => $data,
+            'message' => 'Berhasil'
+        ]);
+    }
+
     public function get($productId, $batchId)
     {
         $data = BatchProses::where('batch_id', $batchId)

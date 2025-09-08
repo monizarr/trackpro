@@ -22,5 +22,6 @@ Route::post('/batch-production', [BatchProductionController::class, 'storeBatchP
 
 Route::get('/production/{productId}/{batchId}', [BatchProductionController::class, 'getProductions']);
 
+Route::get('/proses-produksi-list', [ProsesProduksiController::class, 'index']);
 Route::get('/proses-produksi/{productId}/{batchId}', [ProsesProduksiController::class, 'get']);
 Route::post('/batch-proses-produksi', [BatchProsesProduksiController::class, 'store']);
