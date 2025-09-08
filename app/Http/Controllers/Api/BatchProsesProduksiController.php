@@ -26,7 +26,7 @@ class BatchProsesProduksiController extends Controller
             'batch_id' => 'required|exists:batch_produksi,id',
             'proses_id' => 'required|exists:proses_produksi,id',
             'pekerja_id' => 'required|exists:pekerja,id',
-            'tgl_mulai' => 'required|date',
+            'tgl_mulai' => 'nullable|date',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_mulai',
             'tipe' => 'required|in:in,out',
             'jumlah' => 'required|integer|min:0',

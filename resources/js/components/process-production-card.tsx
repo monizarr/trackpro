@@ -19,7 +19,7 @@ export default function ProcessProductionCard({ id, type, time, pj, item, data }
                             </Badge>
                             <Badge variant="secondary" className={`text-white ${data?.tipe === 'in' ? 'bg-green-700' : 'bg-red-700'}`}>
                                 <PackageOpen className='inline mb-1 mr-1' />
-                                {data?.jumlah}
+                                {data?.jumlah} {data?.jabatan_pekerja == 1 ? 'Roll' : 'Pcs'}
                             </Badge>
                         </div>
                     </div>

@@ -22,9 +22,9 @@ class ProsesProduksiController extends Controller
     public function get($productId, $batchId)
     {
         $data = BatchProses::where('batch_id', $batchId)
-            ->whereHas('produks', function ($query) use ($productId) {
-                $query->where('id', $productId);
-            })
+            // ->whereHas('batchProduksi', function ($query) use ($productId) {
+            //     $query->where('id', $productId);
+            // })
             ->orderBy('proses_id', 'asc')
             ->join('pekerja', 'pekerja.id', '=', 'batch_proses.pekerja_id')
             ->select('batch_proses.*', 'pekerja.nama', 'pekerja.jabatan')

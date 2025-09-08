@@ -19,7 +19,7 @@ class BatchProses extends Model
         'jumlah',
     ];
 
-    public function produks()
+    public function batchProduksi()
     {
         return $this->belongsTo(BatchProduction::class, 'batch_id', 'id');
     }
