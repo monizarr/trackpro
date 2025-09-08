@@ -228,17 +228,15 @@ export default function ProductionPage() {
                                                             produksi[proses.id - 1]?.data?.map((prod: any) => (
                                                                 <ProcessProductionCard
                                                                     key={prod.id}
-                                                                    id={prod.id}
-                                                                    type={prod.tipe}
                                                                     time={new Date(prod.created_at).toLocaleDateString('id-ID', {
                                                                         weekday: 'long',
                                                                         year: 'numeric',
                                                                         month: '2-digit',
                                                                         day: '2-digit',
                                                                     })}
-                                                                    pj={prod.nama_pekerja || 'N/A'}
-                                                                    item={`${prod.jumlah} ${proses.id === 4 ? 'Pcs' : 'Roll'}`}
-                                                                    data={prod} />
+                                                                    data={prod}
+                                                                    pekerja={pekerja}
+                                                                />
                                                             ))
                                                         )
                                                     }

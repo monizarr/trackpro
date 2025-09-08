@@ -24,4 +24,7 @@ Route::get('/production/{productId}/{batchId}', [BatchProductionController::clas
 
 Route::get('/proses-produksi-list', [ProsesProduksiController::class, 'index']);
 Route::get('/proses-produksi/{productId}/{batchId}', [ProsesProduksiController::class, 'get']);
+
 Route::post('/batch-proses-produksi', [BatchProsesProduksiController::class, 'store']);
+Route::put('/batch-proses-produksi/{id}', [BatchProsesProduksiController::class, 'update']);
+Route::delete('/batch-proses-produksi/{id}', [BatchProsesProduksiController::class, 'destroy']);

@@ -27,7 +27,8 @@ class ProsesProduksiController extends Controller
             // })
             ->orderBy('proses_id', 'asc')
             ->join('pekerja', 'pekerja.id', '=', 'batch_proses.pekerja_id')
-            ->select('batch_proses.*', 'pekerja.nama', 'pekerja.jabatan')
+            ->join('proses_produksi', 'proses_produksi.id', '=', 'batch_proses.proses_id')
+            ->select('batch_proses.*', 'pekerja.nama', 'pekerja.jabatan', 'proses_produksi.nama_proses as nama_proses')
             ->get()
             ->groupBy('proses_id')
             ->map(function ($group) {
@@ -36,6 +37,9 @@ class ProsesProduksiController extends Controller
                     'data' => $group->sortBy('created_at')->map(function ($item) {
                         return [
                             'id' => $item->id,
+                            'batch_id' => $item->batch_id,
+                            'nama_proses' => $item->nama_proses,
+                            'proses_id' => $item->proses_id,
                             'pekerja_id' => $item->pekerja_id,
                             'nama_pekerja' => $item->nama,
                             'jabatan_pekerja' => $item->jabatan,
