@@ -30,7 +30,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import axios from 'axios';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronsUpDown, Edit } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -159,8 +159,6 @@ export default function ProductPage() {
             });
     }, []);
 
-    console.log("produk =>", produksi);
-
     // handle submit
     const handleSubmit = (data: BatchProduction) => {
         axios.post('/api/batch-production', data)
@@ -195,10 +193,15 @@ export default function ProductPage() {
             <div className='p-4 flex flex-col md:flex-row gap-6 w-full'>
                 <Card className="w-full mb-6 md:w-96 flex-initial h-fit">
                     <CardHeader>
-                        <CardTitle>{produk?.nama}</CardTitle>
-                        <CardDescription>
-                            {produk.deskripsi}
-                        </CardDescription>
+                        <div className="flex">
+                            <div>
+                                <CardTitle>{produk?.nama}</CardTitle>
+                                <CardDescription>
+                                    {produk.deskripsi}
+                                </CardDescription>
+                            </div>
+                            <Edit className='ml-auto mt-1 cursor-pointer hover:text-accent-foreground' />
+                        </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {produk.gambar && (

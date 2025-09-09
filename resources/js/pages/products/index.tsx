@@ -1,6 +1,7 @@
 import ChevronDown from '@/components/icons/chevron-down';
 import ChevronUp from '@/components/icons/chevron-up';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,6 +41,23 @@ const columns: ColumnDef<Product>[] = [
                 SKU
                 {column.getIsSorted() === "asc" ? <ChevronUp /> : column.getIsSorted() === "desc" ? <ChevronDown /> : <ChevronsUpDown />}
             </button>
+        ),
+        cell: ({ row }) => (
+            <div
+                className="text-left cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800 p-1 rounded"
+                onClick={() => {
+                    navigator.clipboard.writeText(row.original.sku)
+                        .then(() => {
+                            // Optional: Add visual feedback
+                            const el = document.activeElement as HTMLElement;
+                            if (el) el.blur();
+                        })
+                        .catch(err => console.error('Failed to copy text: ', err));
+                }}
+                title="Klik untuk menyalin SKU"
+            >
+                {row.original.sku}
+            </div>
         ),
     },
     {
@@ -126,82 +144,90 @@ export default function ProductsPage() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Produk" />
             <div className='p-4'>
-                <Drawer>
-                    <DrawerTrigger className="hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border border-input bg-background shadow-xs hover:bg-accent px-4 py-2 mb-4 cursor-pointer">
-                        Buat Produk
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <form
-                            className='px-4'
-                            onSubmit={(e) => {
+                <div className="flex gap-4 mb-4">
+                    <div className="w-full">
+                        <input
+                            type="text"
+                            placeholder="Cari Product..."
+                            value={globalFilter ?? ""}
+                            onChange={(e) => setGlobalFilter(e.target.value)}
+                            className="w-full px-3 py-1.5 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+                        />
+                    </div>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="outline">Buat Produk</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <form onSubmit={(e) => {
                                 e.preventDefault();
-                                // const formData = new FormData(e.currentTarget);
-                                // const data = {
-                                //     produk_id: produk.id,
-                                //     tgl_mulai: `${(formData.get('tanggal_mulai') as string).replace('T', ' ')}:00`,
-                                //     jumlah_target: parseInt(formData.get('jumlah_target') as string),
-                                //     status: 'draft',
-                                // };
-                                // console.log("data =>", data);
-                                // handleSubmit(data as BatchProduction);
-                                e.currentTarget.reset();
-                                document.getElementById('drawer-close-btn')?.click();
-                            }}
-                        >
-                            <DrawerHeader>
-                                <DrawerTitle>Buat Produksi</DrawerTitle>
-                                <DrawerDescription>Buat Produksi Baru</DrawerDescription>
-                            </DrawerHeader>
-
-                            <div className="mb-4 flex gap-6">
-                                <div className='w-full'>
-                                    <Label htmlFor="tanggal_mulai" className="block text-sm font-medium">
-                                        Tanggal Mulai
-                                    </Label>
-                                    <Input
-                                        id="tanggal_mulai"
-                                        name="tanggal_mulai"
-                                        type="datetime-local"
-                                        defaultValue={(() => {
-                                            const wibTime = new Date(today.getTime() + (7 * 60 * 60 * 1000));
-                                            return wibTime.toISOString().slice(0, 16);
-                                        })()}
-                                        required
-                                    />
+                                const formData = new FormData(e.currentTarget);
+                                const data = {
+                                    sku: formData.get('sku') as string,
+                                    nama: formData.get('nama') as string,
+                                    harga: formData.get('harga') as string,
+                                    deskripsi: formData.get('deskripsi') as string,
+                                    bahan: formData.get('bahan') as string,
+                                    status: formData.get('status') as string,
+                                };
+                                console.log(data);
+                                axios.post('/api/product', data)
+                                    .then(response => {
+                                        console.log('Product created successfully:', response.data);
+                                        // Optionally, you can add code to update the UI or notify the user
+                                        window.location.reload();
+                                    })
+                                    .catch(error => {
+                                        console.error('There was an error creating the product:', error);
+                                        // Optionally, you can add code to notify the user of the error
+                                    });
+                            }}>
+                                <DialogHeader>
+                                    <DialogTitle>Buat Produk</DialogTitle>
+                                    <DialogDescription>
+                                        Silakan masukkan informasi produk.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid grid-cols-2 gap-4 my-6">
+                                    <div className="grid gap-3">
+                                        <Label htmlFor="sku">SKU</Label>
+                                        <Input id="sku" name="sku" defaultValue="SKU123" />
+                                    </div>
+                                    <div className="grid gap-3">
+                                        <Label htmlFor="nama">Nama</Label>
+                                        <Input id="nama" name="nama" defaultValue="Produk A" />
+                                    </div>
+                                    <div className="grid gap-3">
+                                        <Label htmlFor="harga">Harga</Label>
+                                        <Input id="harga" name="harga" type="number" defaultValue="10000" />
+                                    </div>
+                                    <div className="grid gap-3">
+                                        <Label htmlFor="deskripsi">Deskripsi</Label>
+                                        <Input id="deskripsi" name="deskripsi" defaultValue="Deskripsi produk A" />
+                                    </div>
+                                    <div className="grid gap-3">
+                                        <Label htmlFor="bahan">Bahan</Label>
+                                        <Input id="bahan" name="bahan" defaultValue="Bahan produk A" />
+                                    </div>
+                                    <div className="grid gap-3">
+                                        <Label htmlFor="status">Status</Label>
+                                        <select id="status" name="status" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" defaultValue="active">
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div className='w-full'>
-                                    <Label htmlFor="jumlah_target" className="block text-sm font-medium">
-                                        Jumlah Target (PCS)
-                                    </Label>
-                                    <Input
-                                        id="jumlah_target"
-                                        name="jumlah_target"
-                                        type="number"
-                                        required
-                                        autoFocus
-                                    />
-                                </div>
-                            </div>
-                            <DrawerFooter>
-                                <div className="flex gap-6">
-                                    <DrawerClose id="drawer-close-btn" className='flex-1'>
-                                        <Button type="button" variant="outline" className='w-full'>Cancel</Button>
-                                    </DrawerClose>
-                                    <Button type="submit" className='flex-1'>Buat</Button>
-                                </div>
-                            </DrawerFooter>
-                        </form>
-                    </DrawerContent>
-                </Drawer>
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        placeholder="Cari Product..."
-                        value={globalFilter ?? ""}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300"
-                    />
+                                <DialogFooter>
+                                    <DialogClose asChild>
+                                        {/* <Button variant="outline"></Button> */}
+                                    </DialogClose>
+                                    <Button type="submit" className='cursor-pointer'>Simpan</Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
                 </div>
+
                 <div className="overflow-x-auto rounded-lg shadow">
                     <table className="min-w-full bg-white dark:bg-zinc-950 border border-gray-200 rounded-lg">
                         <thead className="bg-gray-100 dark:bg-zinc-950">

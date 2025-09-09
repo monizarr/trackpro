@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\ProsesProduksiController;
 use App\Http\Controllers\Api\BatchProsesProduksiController;
 use App\Http\Controllers\Api\PekerjaController;
 use App\Http\Controllers\BatchProductionController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Api\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +16,7 @@ Route::get('/pekerja', [PekerjaController::class, 'index']);
 
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
+Route::post('/product', [ProductController::class, 'store']);
 
 Route::get('/batch-production/{productId}', [BatchProductionController::class, 'getBatchProductions']);
 Route::post('/batch-production', [BatchProductionController::class, 'storeBatchProduction']);
