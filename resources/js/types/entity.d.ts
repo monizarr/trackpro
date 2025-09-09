@@ -5,7 +5,7 @@ export type Product = {
     gambar: string;
     harga: string;
     deskripsi: string;
-    bahan: string;
+    material_id: number | null;
     status: string;
 };
 
@@ -28,4 +28,12 @@ export type Production = {
     jumlah: number;
     ditugaskan: string | null;
     data?: [];
+};
+
+export type Bahan = {
+    id: number;
+    nama: string;
+    tipe: string;
+    stok_qty: number;
+    satuan: string;
 };

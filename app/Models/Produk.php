@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 class Produk extends Model
 {
     use HasFactory, Notifiable;
+    protected $table = 'produks';
 
     protected $fillable = [
         'nama',
@@ -18,5 +19,12 @@ class Produk extends Model
         'kategori',
         'sku',
         'status',
+        'material_id',
     ];
+
+    // one to many ke material
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'material_id', 'id');
+    }
 }

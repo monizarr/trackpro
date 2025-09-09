@@ -47,6 +47,8 @@ import {
 } from "@/components/ui/drawer"
 import { Select } from '@/components/ui/select';
 import { formatWaktu } from '@/lib/utils';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@headlessui/react';
 
 const columns: ColumnDef<BatchProduction>[] = [
     {
@@ -138,6 +140,7 @@ export default function ProductPage() {
     const [produk, setProduk] = useState<Product>({} as Product);
     const [produksi, setProduksi] = useState<BatchProduction[]>([]);
     const [today, setToday] = useState<Date>(new Date());
+    const [bahanBaku, setBahanBaku] = useState([]);
 
     useEffect(() => {
         const id = window.location.pathname.split('/').pop()
@@ -156,6 +159,15 @@ export default function ProductPage() {
             })
             .catch((error) => {
                 console.error('Error fetching batch production:', error);
+            });
+
+
+        axios.get(`/api/material-bb`)
+            .then((response) => {
+                setBahanBaku(response.data.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching bahan baku:', error);
             });
     }, []);
 
@@ -200,7 +212,92 @@ export default function ProductPage() {
                                     {produk.deskripsi}
                                 </CardDescription>
                             </div>
-                            <Edit className='ml-auto mt-1 cursor-pointer hover:text-accent-foreground' />
+
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Edit className='ml-auto mt-1 cursor-pointer hover:text-accent-foreground' />
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
+                                    <form onSubmit={(e) => {
+                                        e.preventDefault();
+                                        const formData = new FormData(e.currentTarget);
+                                        const data = {
+                                            sku: formData.get('sku') as string,
+                                            nama: formData.get('nama') as string,
+                                            harga: formData.get('harga') as string,
+                                            deskripsi: formData.get('deskripsi') as string,
+                                            bahan: formData.get('bahan') as string,
+                                            status: formData.get('status') as string,
+                                        };
+                                        console.log(data);
+
+                                        axios.put(`/api/product/${produk.id}`, data)
+                                            .then(response => {
+                                                console.log('Product updated successfully:', response.data);
+                                                // Optionally, you can add code to update the UI or notify the user
+                                                window.location.reload();
+                                            })
+                                            .catch(error => {
+                                                console.error('There was an error creating the product:', error);
+                                                // Optionally, you can add code to notify the user of the error
+                                            });
+                                    }}>
+                                        <DialogHeader>
+                                            <DialogTitle>Buat Produk</DialogTitle>
+                                            <DialogDescription>
+                                                Silakan masukkan informasi produk.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="grid grid-cols-2 gap-4 my-6">
+                                            <div className="grid gap-3">
+                                                <Label htmlFor="sku">SKU</Label>
+                                                <Input id="sku" name="sku" defaultValue={produk.sku} />
+                                            </div>
+                                            <div className="grid gap-3">
+                                                <Label htmlFor="nama">Nama</Label>
+                                                <Input id="nama" name="nama" defaultValue={produk.nama} />
+                                            </div>
+                                            <div className="grid gap-3">
+                                                <Label htmlFor="harga">Harga</Label>
+                                                <Input id="harga" name="harga" type="number" defaultValue={produk.harga} />
+                                            </div>
+                                            <div className="grid gap-3">
+                                                <Label htmlFor="bahan">Bahan</Label>
+                                                <select
+                                                    id="bahan"
+                                                    name="bahan"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                                    defaultValue={produk.material_id || ""}
+                                                >
+                                                    <option value="">Pilih bahan</option>
+                                                    {bahanBaku.map((bahan: any) => (
+                                                        <option key={bahan.id} value={bahan.id}>
+                                                            {bahan.nama}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="grid gap-3 col-span-2">
+                                                <Label htmlFor="deskripsi">Deskripsi</Label>
+                                                <Textarea className='text-sm rounded border p-1' id="deskripsi" name="deskripsi" defaultValue={produk.deskripsi} />
+                                            </div>
+                                            <div className="grid gap-3">
+                                                <Label htmlFor="status">Status</Label>
+                                                <select id="status" name="status" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" defaultValue="active">
+                                                    <option value="active">Active</option>
+                                                    <option value="inactive">Inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <DialogFooter>
+                                            <div className="flex justify-between">
+                                                <Button className='cursor-pointer'>Hapus</Button>
+                                                <Button type="submit" className='cursor-pointer'>Simpan</Button>
+                                            </div>
+                                        </DialogFooter>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">

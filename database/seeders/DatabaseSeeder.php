@@ -138,6 +138,7 @@ class DatabaseSeeder extends Seeder
         BatchProses::insert([
             [
                 'batch_id' => 1,
+                'produk_id' => 1,
                 'proses_id' => 1,
                 'pekerja_id' => 1,
                 'tgl_mulai' => now(),
@@ -150,6 +151,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'batch_id' => 1,
+                'produk_id' => 1,
                 'proses_id' => 2,
                 'pekerja_id' => 2,
                 'tgl_mulai' => now()->addHours(2),
@@ -162,6 +164,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'batch_id' => 1,
+                'produk_id' => 1,
                 'proses_id' => 3,
                 'pekerja_id' => 3,
                 'tgl_mulai' => now()->addHours(4),
@@ -174,6 +177,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'batch_id' => 1,
+                'produk_id' => 1,
                 'proses_id' => 4,
                 'pekerja_id' => 4,
                 'tgl_mulai' => null,

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ProsesProduksiController;
 use App\Http\Controllers\Api\BatchProsesProduksiController;
+use App\Http\Controllers\Api\MaterialController;
 use App\Http\Controllers\Api\PekerjaController;
 use App\Http\Controllers\BatchProductionController;
 use App\Http\Controllers\Api\ProductController;
@@ -12,11 +13,19 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/material', [MaterialController::class, 'index']);
+Route::get('/material-bb', [MaterialController::class, 'bahanBaku']);
+Route::get('/material/{id}', [MaterialController::class, 'show']);
+Route::post('/material', [MaterialController::class, 'store']);
+Route::put('/material/{id}', [MaterialController::class, 'update']);
+Route::delete('/material/{id}', [MaterialController::class, 'destroy']);
+
 Route::get('/pekerja', [PekerjaController::class, 'index']);
 
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
 Route::post('/product', [ProductController::class, 'store']);
+Route::put('/product/{id}', [ProductController::class, 'update']);
 
 Route::get('/batch-production/{productId}', [BatchProductionController::class, 'getBatchProductions']);
 Route::post('/batch-production', [BatchProductionController::class, 'storeBatchProduction']);

@@ -10,6 +10,7 @@ class BatchProses extends Model
 
     protected $fillable = [
         'batch_id',
+        'produk_id',
         'proses_id',
         'pekerja_id',
         'tipe',
@@ -22,5 +23,10 @@ class BatchProses extends Model
     public function batchProduksi()
     {
         return $this->belongsTo(BatchProduction::class, 'batch_id', 'id');
+    }
+
+    public function produk()
+    {
+        return $this->belongsTo(Produk::class, 'produk_id', 'id');
     }
 }

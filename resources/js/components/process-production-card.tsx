@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import axios from 'axios';
 
 export default function ProcessProductionCard({ time, data, pekerja }: { time: string, data: any, pekerja: any }) {
-
+    console.log(data);
     const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);

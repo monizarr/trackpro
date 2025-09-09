@@ -28,17 +28,9 @@ return new class extends Migration
             $table->string('gambar')->nullable();
             $table->integer('harga');
             $table->text('deskripsi')->nullable();
-            $table->string('bahan')->nullable();
+            $table->foreignId('material_id')->nullable()->constrained('materials')->onDelete('set null');
             $table->string('status')->nullable();
             $table->timestamps();
-        });
-
-        // ProdukBahan (relasi M:N antara Produk dan Material)
-        Schema::create('produk_bahan', function (Blueprint $table) {
-            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade');
-            $table->foreignId('material_id')->constrained('materials')->onDelete('cascade');
-            $table->integer('qty');
-            $table->primary(['produk_id', 'material_id']);
         });
 
         // BatchProduksi
@@ -82,6 +74,7 @@ return new class extends Migration
         Schema::create('batch_proses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('batch_id')->constrained('batch_produksi')->onDelete('cascade');
+            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade');
             $table->foreignId('proses_id')->constrained('proses_produksi')->onDelete('cascade');
             $table->foreignId('pekerja_id')->constrained('pekerja')->onDelete('cascade');
             $table->dateTime('tgl_mulai')->nullable();

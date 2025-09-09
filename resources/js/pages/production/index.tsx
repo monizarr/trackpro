@@ -65,6 +65,7 @@ export default function ProductionPage() {
         const formDataEntries = Object.fromEntries(formData.entries());
         const data: Record<string, any> = {
             batch_id: batchId,
+            produk_id: productId,
             proses_id: formDataEntries.proses_id,
             tipe: formDataEntries.tipe,
             pekerja_id: formDataEntries.pekerja,
